@@ -91,9 +91,8 @@ def batch_eval_recall(_sess, tf_eval, eval_feed_dict, recall_k, eval_data, R):
         at_k = preds_k.shape[1]
         y = eval_data.R_test_inf
 
-        x = scipy.sparse.lil_matrix(y.shape)
-        x.rows = preds_k
-        x.data = np.ones_like(preds_k)
+        x = scipy.sparse.coo_matrix((np.ones_like(preds_k).reshape(-1), 
+                                     (np.repeat(np.arange(y.shape[0]), at_k), preds_k.reshape(-1))), shape=y.shape)
 
         z = y.multiply(x)
 
@@ -103,9 +102,8 @@ def batch_eval_recall(_sess, tf_eval, eval_feed_dict, recall_k, eval_data, R):
         precision_users = np.sum(z, 1) / at_k
         precision.append(np.mean(precision_users))
 
-        x_coo = x.tocoo()
-        rows = x_coo.row
-        cols = x_coo.col
+        rows = x.row
+        cols = x.col
         y_csr = y.tocsr()
         dcg_array = y_csr[(rows, cols)].A1.reshape((preds_k.shape[0], -1))
         dcg = np.sum(dcg_array * idcg_array[:at_k].reshape((1, -1)), axis=1)
