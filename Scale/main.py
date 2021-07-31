@@ -229,7 +229,6 @@ if __name__ == "__main__":
     parser.add_argument('--bs', type=int, default=50, help='data batch size')
     parser.add_argument('--eval_batch_size', type=int, default=40000, help='eval_batch_size')
 
-
     parser.add_argument('--reg', type=float, default=0.00001, help='reg')
     parser.add_argument('--alpha', type=float, default=4, help='alpha')
 
